@@ -3,6 +3,7 @@ import cors from "cors";
 import express, { Request, Response } from "express";
 import { envList } from "./config/envList";
 import globalErrorHandler from "./errors/globalErrorHandler";
+import { multerErrorHandler } from "./middlewares/multerErrorHandler";
 import { router } from "./routes";
 import notFound from "./utils/notFound";
 
@@ -11,7 +12,8 @@ const app = express()
 
 
 app.use(cookieParser())
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use(cors({
     origin: envList.FRONT_END_SITE,
@@ -32,6 +34,8 @@ app.get("/", (req: Request, res: Response) => {
 
 
 
+// Multer error handler must come before global error handler
+app.use(multerErrorHandler)
 app.use(globalErrorHandler)
 app.use(notFound)
 
