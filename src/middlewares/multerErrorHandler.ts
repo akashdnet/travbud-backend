@@ -16,6 +16,12 @@ export const multerErrorHandler = (
         let message = "File upload error";
         let statusCode = 400;
 
+        console.error("❌ Multer Error:", {
+            code: err.code,
+            message: err.message,
+            field: err.field,
+        });
+
         switch (err.code) {
             case "LIMIT_FILE_SIZE":
                 message = "File size is too large. Maximum size is 10MB.";
@@ -51,6 +57,14 @@ export const multerErrorHandler = (
 
     // Handle busboy/multipart stream errors
     if (err.message && err.message.includes("Unexpected end of form")) {
+        console.error("❌ Upload Interrupted:", {
+            message: err.message,
+            contentType: req.headers['content-type'],
+            contentLength: req.headers['content-length'],
+            method: req.method,
+            url: req.url,
+        });
+
         return res.status(400).json({
             success: false,
             message: "File upload was interrupted. Please try again.",

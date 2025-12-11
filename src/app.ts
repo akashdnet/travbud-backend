@@ -12,8 +12,24 @@ const app = express()
 
 
 app.use(cookieParser())
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Only parse JSON and URL-encoded bodies if NOT multipart/form-data
+// This prevents body parsers from consuming the stream before multer
+app.use((req, res, next) => {
+    const contentType = req.headers['content-type'] || '';
+    if (contentType.includes('multipart/form-data')) {
+        return next();
+    }
+    express.json({ limit: '50mb' })(req, res, next);
+});
+
+app.use((req, res, next) => {
+    const contentType = req.headers['content-type'] || '';
+    if (contentType.includes('multipart/form-data')) {
+        return next();
+    }
+    express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
+});
 
 app.use(cors({
     origin: envList.FRONT_END_SITE,
