@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authGuard from "../../middlewares/auth";
+import { fileUploader } from "../../middlewares/fileUploader";
 import { upload } from "../../middlewares/upload";
 import { validateRequest } from "../../utils/validationRequest";
 import { userController } from "./user.controller";
@@ -13,7 +14,7 @@ const router = Router();
 
 
 // user routes 
-router.post("/register", upload.single("image"), validateRequest(userValidation.userRegistrationValidation), userController.createUser);
+router.post("/register", fileUploader.upload.single('image'), validateRequest(userValidation.userRegistrationValidation), userController.createUser);
 router.get("/me", authGuard("admin", "user"), userController.getSingleUser);
 router.patch("/update/me", upload.single("image"), validateRequest(userValidation.userUpdateValidation), authGuard("admin", "user"), userController.updateUser);
 router.delete("/me", authGuard("user"), userController.deleteUser);
