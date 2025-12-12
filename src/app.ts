@@ -2,7 +2,6 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
-import { envList } from "./config/envList";
 import globalErrorHandler from "./errors/globalErrorHandler";
 import { router } from "./routes";
 import notFound from "./utils/notFound";
@@ -17,8 +16,10 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin: envList.FRONT_END_SITE,
-    credentials: true
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 
 
@@ -42,7 +43,6 @@ app.get("/", (req: Request, res: Response) => {
 
 
 
-// Multer error handler must come before global error handler
 
 app.use(globalErrorHandler)
 app.use(notFound)
