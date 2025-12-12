@@ -36,7 +36,7 @@ coverage/
 .vscode/
 
 # Uploaded files (if you store uploads locally)
-uploads/
+# uploads/
 public/uploads/
 
 # TypeScript build artifacts
