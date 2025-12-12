@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 
-/**
- * Middleware to handle Multer-specific errors
- * This prevents "Unexpected end of form" and other multipart parsing errors from crashing the app
- */
 export const multerErrorHandler = (
     err: any,
     req: Request,
@@ -56,7 +52,7 @@ export const multerErrorHandler = (
     }
 
     // Handle busboy/multipart stream errors
-    if (err.message && err.message.includes("Unexpected end of form")) {
+    if (err.message && (err.message.includes("Unexpected end of form") || err.message.includes("Multipart: Boundary not found"))) {
         console.error("❌ Upload Interrupted:", {
             message: err.message,
             contentType: req.headers['content-type'],
@@ -65,10 +61,14 @@ export const multerErrorHandler = (
             url: req.url,
         });
 
+        const message = err.message.includes("Multipart: Boundary not found")
+            ? "File upload failed: Multipart boundary not found. Did you set 'Content-Type' manually? Please remove it and let the browser set it."
+            : "File upload was interrupted. Please try again.";
+
         return res.status(400).json({
             success: false,
-            message: "File upload was interrupted. Please try again.",
-            error: "UPLOAD_INTERRUPTED",
+            message,
+            error: "UPLOAD_FAILED",
         });
     }
 
