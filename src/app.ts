@@ -1,3 +1,4 @@
+import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
@@ -12,15 +13,6 @@ const app = express()
 
 app.use(cookieParser())
 
-// Only parse JSON and URL-encoded bodies if NOT multipart/form-data
-// This prevents body parsers from consuming the stream before multer
-app.use((req, res, next) => {
-    const contentType = req.headers['content-type'] || '';
-    if (contentType.includes('multipart/form-data')) {
-        return next();
-    }
-    express.json({ limit: '50mb' })(req, res, next);
-});
 
 
 
@@ -28,6 +20,13 @@ app.use(cors({
     origin: envList.FRONT_END_SITE,
     credentials: true
 }));
+
+
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json({ limit: '50mb' }))
 
 
 
