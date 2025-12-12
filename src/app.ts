@@ -3,7 +3,6 @@ import cors from "cors";
 import express, { Request, Response } from "express";
 import { envList } from "./config/envList";
 import globalErrorHandler from "./errors/globalErrorHandler";
-import { multerErrorHandler } from "./middlewares/multerErrorHandler";
 import { router } from "./routes";
 import notFound from "./utils/notFound";
 
@@ -23,13 +22,7 @@ app.use((req, res, next) => {
     express.json({ limit: '50mb' })(req, res, next);
 });
 
-app.use((req, res, next) => {
-    const contentType = req.headers['content-type'] || '';
-    if (contentType.includes('multipart/form-data')) {
-        return next();
-    }
-    express.urlencoded({ extended: true, limit: '50mb' })(req, res, next);
-});
+
 
 app.use(cors({
     origin: envList.FRONT_END_SITE,
@@ -51,7 +44,7 @@ app.get("/", (req: Request, res: Response) => {
 
 
 // Multer error handler must come before global error handler
-app.use(multerErrorHandler)
+
 app.use(globalErrorHandler)
 app.use(notFound)
 
