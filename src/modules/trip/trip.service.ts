@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import AppError from "../../errors/AppError";
 import User from "../user/user.model";
-import { ITrip } from "./trip.interface";
+import { ITrip, PaginatedResponse, TripQueryParams } from "./trip.interface";
 import Trip from "./trip.model";
 
 const createTrip = async (userId: string, payload: ITrip, photoUrls: string[] = []): Promise<ITrip> => {
@@ -36,29 +36,6 @@ const createTrip = async (userId: string, payload: ITrip, photoUrls: string[] = 
     return result as unknown as ITrip;
 };
 
-interface TripQueryParams {
-    page?: number;
-    limit?: number;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    status?: string;
-    minBudget?: number;
-    maxBudget?: number;
-    travelType?: string;
-    startDate?: string;
-    endDate?: string;
-}
-
-interface PaginatedResponse<T> {
-    items: T[];
-    pagination: {
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-    };
-}
 
 const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedResponse<ITrip>> => {
     const {
@@ -130,7 +107,7 @@ const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedRespo
             .sort(sortOptions)
             .skip(skip)
             .limit(limitNum)
-            .populate('userId', 'name email photo'),
+            .populate('guide', 'name email photo reviews'),
         Trip.countDocuments(query)
     ]);
 
@@ -247,7 +224,7 @@ const updateTrip = async (id: string, payload: Partial<ITrip>, userId?: string, 
         throw new AppError(404, "No Trip found with this id.");
     }
 
-    if (userId && trip.userId.toString() !== userId) {
+    if (userId && trip.guide.toString() !== userId) {
         throw new AppError(403, "You are not authorized to update this trip");
     }
 
@@ -265,7 +242,7 @@ const deleteTrip = async (id: string, userId?: string): Promise<ITrip | null> =>
         throw new AppError(404, "No Trip found with this id.");
     }
 
-    if (userId && trip.userId.toString() !== userId) {
+    if (userId && trip.guide.toString() !== userId) {
         throw new AppError(403, "You are not authorized to delete this trip");
     }
 

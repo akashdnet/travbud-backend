@@ -30,3 +30,33 @@ export interface ITrip {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+
+
+
+
+
+
+export interface TripQueryParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    status?: string;
+    minBudget?: number;
+    maxBudget?: number;
+    travelType?: string;
+    startDate?: string;
+    endDate?: string;
+}
+
+export interface PaginatedResponse<T> {
+    items: T[];
+    pagination: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+}

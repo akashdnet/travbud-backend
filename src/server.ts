@@ -17,6 +17,11 @@ const startServer = async () => {
     await createSuperAdmin();
 
 
+    // tours
+    // await createMultipleTrips();
+
+    // reviews
+    // await createReviews();
 
 
     server = app.listen(envList.PORT, () => {
