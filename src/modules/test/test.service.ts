@@ -1,5 +1,5 @@
-import { deleteCloudinaryImage } from "../../config/cloudinary";
 import AppError from "../../errors/AppError";
+import { deleteCloudinaryImage } from "../../middlewares/upload";
 import { ITest } from "./test.interface";
 import { Test } from "./test.model";
 

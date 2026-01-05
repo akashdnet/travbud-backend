@@ -21,9 +21,9 @@ const userRegistrationValidation = z.object({
     visitedCountries: z.array(z.string()).optional(),
     currentLocation: z.string().optional(),
     contactNumber: z.string().optional(),
-    role: z.enum(["user", "admin"]).optional().default("user"),
+    role: z.enum(["user", "guide", "admin"]).optional().default("user"),
     status: z.enum(["active", "blocked"]).optional().default("active"),
-    isVerified: z.boolean().optional().default(false),
+    // isVerified: z.boolean().optional().default(false),
 });
 
 const userLoginValidation = z.object({
@@ -70,7 +70,7 @@ const adminUserUpdateValidation = z.object({
         return val;
     }, z.number()),
     gender: z.enum(["Male", "Female"]).optional(),
-    role: z.enum(['user', 'admin']),
+    role: z.enum(['user', 'guide', 'admin']).optional(),
     status: z.enum(['active', 'blocked']),
     travelInterests: z.array(z.string()).optional(),
     visitedCountries: z.array(z.string()).optional(),

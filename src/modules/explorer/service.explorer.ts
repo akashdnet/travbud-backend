@@ -1,5 +1,6 @@
 import Trip from "../trip/trip.model";
 import modelWebReviews from "../website-reviews/model.webReviews";
+import { Subscribe } from "./model.explorer";
 
 const fetchHome = async () => {
 
@@ -10,11 +11,27 @@ const fetchHome = async () => {
     return { trips, reviews };
 }
 
-
+const subscribe = async (email: string) => {
+    // check email is already subscribed
+    const isSubscribed = await Subscribe.findOne({ email });
+    if (isSubscribed) {
+        return {
+            message: "You are already subscribed",
+        };
+    }
+    const result = await Subscribe.create({ email });
+    if (!result) {
+        throw new Error("Failed to subscribe");
+    }
+    return {
+        message: "Subscribed successfully",
+    };
+}
 
 
 
 
 export const explorerService = {
-    fetchHome
+    fetchHome,
+    subscribe
 }

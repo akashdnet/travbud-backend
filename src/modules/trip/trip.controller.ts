@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { deleteCloudinaryImage } from "../../config/cloudinary";
+import { deleteCloudinaryImage } from "../../middlewares/upload";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import statusCode from "../../utils/statusCodes";

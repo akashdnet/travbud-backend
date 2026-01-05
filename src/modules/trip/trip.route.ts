@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authGuard from "../../middlewares/auth";
+import { upload } from "../../middlewares/upload";
 import { validateRequest } from "../../utils/validationRequest";
 import { tripController } from "./trip.controller";
 import { tripValidation } from "./trip.validation";
@@ -9,7 +10,6 @@ const router = Router();
 
 // creator, percepent, admin
 
-import { upload } from "../../middlewares/upload";
 
 // creator 
 router.post("/register", authGuard('user'), upload.array("photos", 10), validateRequest(tripValidation.tripRegistrationValidation), tripController.createTrip);

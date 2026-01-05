@@ -1,5 +1,5 @@
-import { deleteCloudinaryImage } from "../../config/cloudinary";
 import AppError from "../../errors/AppError";
+import { deleteCloudinaryImage } from "../../middlewares/upload";
 import Trip from "../trip/trip.model";
 import { IUser } from "./user.interface";
 import User from "./user.model";

@@ -14,7 +14,7 @@ export interface IUser {
     visitedCountries?: string[];
     currentLocation?: string | null;
     contactNumber?: string;
-    role?: 'user' | 'admin';
+    role?: 'user' | 'guide' | 'admin';
     status?: 'active' | 'blocked';
     isVerified?: boolean;
     createdAt?: Date;

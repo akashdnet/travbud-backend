@@ -230,7 +230,7 @@ export const createSuperAdmin = async () => {
     // if super admin already exists then return 
     const isSuperAdmin = await User.findOne({ email: "superadmin@travbud.com" });
     if (isSuperAdmin) {
-        console.log("😎 Super Admin already exists.");
+        console.log("😎 Super Admin already exists.   superadmin@travbud.com:123456");
         return;
     };
 

@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
 
     role: {
         type: String,
-        enum: ['user', 'admin'],
+        enum: ['user', 'guide', 'admin'],
         default: 'user'
     },
     status: {
@@ -80,7 +80,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
     },
     isVerified: {
         type: Boolean,
-        default: false
+        default: true
     }
 }, {
     timestamps: true

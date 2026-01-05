@@ -4,10 +4,11 @@ import { sendResponse } from "../../utils/sendResponse";
 import statusCode from "../../utils/statusCodes";
 import { userService } from "./user.service";
 
-import { deleteCloudinaryImage } from "../../config/cloudinary";
+import { deleteCloudinaryImage } from "../../middlewares/upload";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
     try {
+        // console.log("DEBUG req.file:", req.file);
         const result = await userService.createUser(req.body, req.file?.path!);
 
         sendResponse(res, {

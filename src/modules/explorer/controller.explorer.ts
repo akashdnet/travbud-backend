@@ -16,9 +16,22 @@ const fetchHome = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-
+const subscribe = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    if (!email) {
+        throw new Error("Email is required");
+    }
+    const result = await explorerService.subscribe(email);
+    sendResponse(res, {
+        statusCode: statusCode.OK,
+        success: true,
+        message: result.message,
+        data: [],
+    });
+});
 
 
 export const explorerController = {
-    fetchHome
+    fetchHome,
+    subscribe
 }
