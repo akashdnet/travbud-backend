@@ -17,6 +17,7 @@ router.post("/register", upload.single('photo'), validateRequest(userValidation.
 router.get("/me", authGuard("user", "guide", "admin"), userController.getSingleUser);
 router.patch("/update/me", upload.single('photo'), validateRequest(userValidation.userUpdateValidation), authGuard("user", "guide", "admin"), userController.updateUser);
 router.delete("/me", authGuard("user", "guide", "admin"), userController.deleteUser);
+router.get("/profile-overview", authGuard("user", "guide", "admin"), userController.getProfileOverview);
 
 
 // admin routes 

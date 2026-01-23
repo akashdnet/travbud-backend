@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import globalErrorHandler from "./errors/globalErrorHandler";
+import { logger } from "./middlewares/logger";
 import { router } from "./routes";
 import notFound from "./utils/notFound";
 
@@ -29,7 +30,7 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '50mb' }))
 
-
+app.use(logger);
 
 app.use("/api/v1", router)
 

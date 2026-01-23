@@ -5,7 +5,6 @@ import { sendResponse } from "../../utils/sendResponse";
 import statusCode from "../../utils/statusCodes";
 import { tripService } from "./trip.service";
 
-
 const createTrip = catchAsync(async (req: Request, res: Response) => {
     const userId = (req as any).user.id;
 
@@ -13,6 +12,8 @@ const createTrip = catchAsync(async (req: Request, res: Response) => {
     if (req.files && Array.isArray(req.files)) {
         photoUrls = (req.files as Express.Multer.File[]).map((file) => file.path);
     }
+
+    req.body.guide = userId;
 
     try {
         const result = await tripService.createTrip(userId, req.body, photoUrls);
@@ -163,7 +164,7 @@ const getAllJoinRequests = catchAsync(async (req: Request, res: Response) => {
 });
 
 const cancelJoinRequest = catchAsync(async (req: Request, res: Response) => {
-    const tripId = req.params.id; // Using params.id as tripId from route
+    const tripId = req.params.id;
     const userId = (req as any).user.id;
     const result = await tripService.cancelJoinRequest(tripId, userId);
 
@@ -177,7 +178,7 @@ const cancelJoinRequest = catchAsync(async (req: Request, res: Response) => {
 
 const approveJoinRequest = catchAsync(async (req: Request, res: Response) => {
     const creatorId = (req as any).user.id;
-    const { tripId, participantId } = req.body; // tripId and userId(participant) from body
+    const { tripId, participantId } = req.body;
     const result = await tripService.approveJoinRequest(tripId, creatorId, participantId);
 
     sendResponse(res, {

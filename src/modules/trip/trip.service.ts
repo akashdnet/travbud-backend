@@ -20,22 +20,14 @@ const createTrip = async (userId: string, payload: ITrip, photoUrls: string[] = 
         throw new AppError(404, "This user is blocked. You can't create a trip.");
     }
 
-    // find user trips
     const userTrips = await Trip.find({ userId });
 
     if (userTrips.length >= 5 && user?.isVerified === false) {
         throw new AppError(404, "Become a verified user to create more than 5 trips.");
     }
-
-
-
-
-
-
     const result = await Trip.create(payload);
     return result as unknown as ITrip;
 };
-
 
 const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedResponse<ITrip>> => {
     const {
@@ -52,10 +44,8 @@ const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedRespo
         endDate
     } = queryParams;
 
-    // Build query
     const query: any = {};
 
-    // Search in destination and description
     if (search) {
         query.$or = [
             { destination: { $regex: search, $options: 'i' } },
@@ -63,12 +53,10 @@ const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedRespo
         ];
     }
 
-    // Filter by status
     if (status) {
         query.status = status;
     }
 
-    // Filter by budget range
     if (minBudget !== undefined || maxBudget !== undefined) {
         query.budget = {};
         if (minBudget !== undefined) {
@@ -79,13 +67,11 @@ const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedRespo
         }
     }
 
-    // Filter by travel type
     if (travelType) {
         const types = travelType.split(',').map(t => t.trim());
         query.travelTypes = { $in: types };
     }
 
-    // Filter by date range
     if (startDate) {
         query.startDate = { $gte: new Date(startDate) };
     }
@@ -93,15 +79,12 @@ const getAllTrips = async (queryParams: TripQueryParams): Promise<PaginatedRespo
         query.endDate = { $lte: new Date(endDate) };
     }
 
-    // Pagination
     const skip = (page - 1) * limit;
-    const limitNum = Math.min(limit, 100); // Max 100 items per page
+    const limitNum = Math.min(limit, 100);
 
-    // Sorting
     const sortOptions: any = {};
     sortOptions[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    // Execute query
     const [items, total] = await Promise.all([
         Trip.find(query)
             .sort(sortOptions)
@@ -137,10 +120,8 @@ const getAllMyTrips = async (userId: string, queryParams: TripQueryParams): Prom
         endDate
     } = queryParams;
 
-    // Build query with userId filter
     const query: any = { userId };
 
-    // Search in destination and description
     if (search) {
         query.$or = [
             { destination: { $regex: search, $options: 'i' } },
@@ -148,12 +129,10 @@ const getAllMyTrips = async (userId: string, queryParams: TripQueryParams): Prom
         ];
     }
 
-    // Filter by status
     if (status) {
         query.status = status;
     }
 
-    // Filter by budget range
     if (minBudget !== undefined || maxBudget !== undefined) {
         query.budget = {};
         if (minBudget !== undefined) {
@@ -164,13 +143,11 @@ const getAllMyTrips = async (userId: string, queryParams: TripQueryParams): Prom
         }
     }
 
-    // Filter by travel type
     if (travelType) {
         const types = travelType.split(',').map(t => t.trim());
         query.travelTypes = { $in: types };
     }
 
-    // Filter by date range
     if (startDate) {
         query.startDate = { $gte: new Date(startDate) };
     }
@@ -178,26 +155,22 @@ const getAllMyTrips = async (userId: string, queryParams: TripQueryParams): Prom
         query.endDate = { $lte: new Date(endDate) };
     }
 
-    // Pagination
     const skip = (page - 1) * limit;
-    const limitNum = Math.min(limit, 100); // Max 100 items per page
+    const limitNum = Math.min(limit, 100);
 
-    // Sorting
     const sortOptions: any = {};
     sortOptions[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    // Execute query
     const [items, total] = await Promise.all([
         Trip.find(query)
             .sort(sortOptions)
             .skip(skip)
             .limit(limitNum)
-            .populate('participants.pending', 'name email _id') //add id
+            .populate('participants.pending', 'name email _id')
             .populate('participants.approved', 'name email _id'),
         Trip.countDocuments(query)
     ]);
-
-    return {
+    const finalResult = {
         items: items as unknown as ITrip[],
         pagination: {
             total,
@@ -206,6 +179,8 @@ const getAllMyTrips = async (userId: string, queryParams: TripQueryParams): Prom
             totalPages: Math.ceil(total / limitNum)
         }
     };
+
+    return finalResult;
 };
 
 const getSingleTrip = async (id: string): Promise<ITrip | null> => {
@@ -219,8 +194,6 @@ const getSingleTrip = async (id: string): Promise<ITrip | null> => {
 const updateTrip = async (id: string, payload: Partial<ITrip>, userId?: string, photoUrls: string[] = []): Promise<ITrip | null> => {
     const trip = await Trip.findById(id);
     if (!trip) {
-        // If we're rejecting here, we should ideally handle image cleanup in controller catch, 
-        // which we are doing.
         throw new AppError(404, "No Trip found with this id.");
     }
 
@@ -251,8 +224,6 @@ const deleteTrip = async (id: string, userId?: string): Promise<ITrip | null> =>
 };
 
 const requestToJoinTrip = async (tripId: string, userId: string): Promise<ITrip | null> => {
-
-
     const user = await User.findById(userId);
     if (user?.status === 'blocked') {
         throw new AppError(404, "This user is blocked. You can't join a trip.");
@@ -311,10 +282,6 @@ const cancelJoinRequest = async (tripId: string, userId: string): Promise<ITrip 
 };
 
 const approveJoinRequest = async (tripId: string, creatorId: string, participantId: string): Promise<ITrip | null> => {
-
-
-
-
     const trip = await Trip.findById(tripId);
     if (!trip) {
         throw new AppError(404, "Trip not found");
@@ -324,37 +291,17 @@ const approveJoinRequest = async (tripId: string, creatorId: string, participant
         throw new AppError(404, "No participants found for this trip");
     }
 
-
-
-
-    console.log(`
-        
-        
-        
-        
-        
-        
-        
-        `)
-
-    console.log(trip.participants.pending[0].toString(), participantId, "compare ")
-
     const pendingUser = trip.participants.pending.find(id => id.toString() === participantId);
 
     if (!pendingUser) {
         throw new AppError(404, "You do not have a pending request for this trip");
     }
 
-    // Remove from pending list
     trip.participants.pending = trip.participants.pending.filter(id => id.toString() !== participantId);
-
-    // Add to approved list
     trip.participants.approved.push(new mongoose.Types.ObjectId(participantId));
 
     await trip.save();
     return trip as unknown as ITrip;
-
-
 };
 
 export const tripService = {

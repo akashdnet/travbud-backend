@@ -8,7 +8,6 @@ import { deleteCloudinaryImage } from "../../middlewares/upload";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
     try {
-        // console.log("DEBUG req.file:", req.file);
         const result = await userService.createUser(req.body, req.file?.path!);
 
         sendResponse(res, {
@@ -50,8 +49,6 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id || (req as any).user?.id;
-
-
     const result = await userService.getSingleUser(id);
     sendResponse(res, {
         statusCode: statusCode.OK,
@@ -90,10 +87,22 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getProfileOverview = catchAsync(async (req: Request, res: Response) => {
+    const user = (req as any).user;
+    const result = await userService.getProfileOverview(user.id, user.role);
+    sendResponse(res, {
+        statusCode: statusCode.OK,
+        success: true,
+        message: "Profile overview retrieved successfully",
+        data: result,
+    });
+});
+
 export const userController = {
     createUser,
     getAllUsers,
     getSingleUser,
     updateUser,
     deleteUser,
+    getProfileOverview
 };
